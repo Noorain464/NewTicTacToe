@@ -1,6 +1,7 @@
 package models;
 
 import exceptions.InvalidMoveException;
+import winningstrategy.WinningAlgo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,6 +13,7 @@ public class Game {
     private GameState gameState;
     private Player winner;
     private int nextPlayerIndex;
+    private WinningAlgo winningAlgo;
     public Game(int dimension,List<Player> players) {
         this.board = new Board(dimension);
         this.players = players;
@@ -19,6 +21,7 @@ public class Game {
         this.gameState = GameState.INPROGRESS;
         this.nextPlayerIndex = 0;
         this.winner = null;
+        this.winningAlgo = new WinningAlgo();
     }
 
     public Board getBoard() {
@@ -80,8 +83,9 @@ public class Game {
         }
         return board.getBoard().get(row).get(col).getCellState().equals(CellState.EMPTY);
     }
-    public void makeMove(Game game) throws InvalidMoveException {
+    public void makeMove() throws InvalidMoveException {
         Player currentPlayer = players.get(nextPlayerIndex);
+        System.out.println("It is " + currentPlayer.getName() + " move");
         //Move that currentPlayer wants to make
         Move move = currentPlayer.makeMove(board);
         //Game will validate the move
@@ -96,5 +100,11 @@ public class Game {
 
         Move finalMove = new Move(celltoChange,currentPlayer);
         moves.add(finalMove);
+        nextPlayerIndex = (nextPlayerIndex + 1)%players.size();
+
+        if(winningAlgo.checkWinner(board,finalMove)){
+            gameState = GameState.ENDED;
+            winner = currentPlayer;
+        }
     }
 }

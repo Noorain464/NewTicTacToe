@@ -1,5 +1,6 @@
 package controller;
 
+import exceptions.InvalidMoveException;
 import models.Game;
 import models.GameState;
 import models.Player;
@@ -12,8 +13,8 @@ public class GameController {
         // If same symbol throw some exception
         return new Game(dimension, players);
     }
-    public void makeMove(Game game){
-        return;
+    public void makeMove(Game game) throws InvalidMoveException {
+        game.makeMove();
     }
     public GameState checkState (Game game){
         return game.getGameState();
